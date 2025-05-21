@@ -134,7 +134,7 @@ class ApplicationConfig {
 	bool suppressLoggingOutput = false;
 	
 	// Default number of concurrent threads when downloading and uploading data
-	ulong defaultConcurrentThreads = 8;
+	ulong defaultConcurrentThreads = 16;
 	
 	// Default number of seconds inotify actions will be delayed by
 	ulong defaultInotifyDelay = 5;
