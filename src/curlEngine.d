@@ -3,7 +3,11 @@ module curlEngine;
 
 // What does this module require to function?
 import std.net.curl;
-import etc.c.curl;
+
+// Polyfill missing constants from etc.c.curl
+enum long CURL_HTTP_VERSION_2_0 = 3;    // CURL_HTTP_VERSION_2_0
+enum long CURLPIPE_WAIT         = 4;    // CURLPIPE_WAIT = (1 << 2)
+
 import std.datetime;
 import std.conv;
 import std.file;
@@ -13,7 +17,6 @@ import std.stdio;
 import std.range;
 import core.memory;
 import core.sys.posix.signal;
-import etc.c.curl: CURL_HTTP_VERSION_2_0, CURLPIPE_WAIT;
 
 // What other modules that we have created do we need to import?
 import log;
