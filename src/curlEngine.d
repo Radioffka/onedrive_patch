@@ -225,7 +225,7 @@ class CurlEngine {
         if ((debugLogging) && (debugHTTPSResponse)) {
             addLogEntry("Created new CurlEngine instance id: " ~ to!string(internalThreadId), ["debug"]);
         }
-    }
+    
 
     
 }
