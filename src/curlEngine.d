@@ -2,7 +2,7 @@
 module curlEngine;
 
 // What does this module require to function?
-import std.net.curl;
+import std.net.curl : Curl;
 
 // Polyfill missing constants from etc.c.curl
 enum long CURL_HTTP_VERSION_2_0 = 3;    // CURL_HTTP_VERSION_2_0
@@ -218,16 +218,17 @@ class CurlEngine {
     SysTime releaseTimestamp;
     ulong maxIdleTime;
     
-    this() {
-        http = HTTP();   // Directly initializes HTTP using its default constructor
-        // — zapnout HTTP/2 multiplexing (eliminace zbytečných TLS handshake)
+        this() {
+        http = Curl();           // místo HTTP()
+        // — zapnout HTTP/2 multiplexing
         http.setOpt(CurlOption.HTTP_VERSION, cast(long)CURL_HTTP_VERSION_2_0);
-        http.setOpt(CurlOption.CURLPIPE_WAIT,      1L);
-        response = null;  // Initialize as null
-        internalThreadId = generateAlphanumericString();  // Give this CurlEngine instance a unique ID
+        http.setOpt(CurlOption.CURLPIPE_WAIT,      CURLPIPE_WAIT);
+        response = null;
+        internalThreadId = generateAlphanumericString();
         if ((debugLogging) && (debugHTTPSResponse)) {
             addLogEntry("Created new CurlEngine instance id: " ~ to!string(internalThreadId), ["debug"]);
         }
+    
     
 
     
