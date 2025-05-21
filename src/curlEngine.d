@@ -13,6 +13,7 @@ import std.stdio;
 import std.range;
 import core.memory;
 import core.sys.posix.signal;
+import etc.c.curl: CURL_HTTP_VERSION_2_0, CURLPIPE_WAIT;
 
 // What other modules that we have created do we need to import?
 import log;
@@ -202,23 +203,32 @@ class CurlResponse {
 	}
 }
 
+
 class CurlEngine {
 
-	HTTP http;
-	File uploadFile;
-	CurlResponse response;
-	bool keepAlive;
-	ulong dnsTimeout;
-	string internalThreadId;
-	SysTime releaseTimestamp;
-	ulong maxIdleTime;
-	
+    HTTP http;
+    File uploadFile;
+    CurlResponse response;
+    bool keepAlive;
+    ulong dnsTimeout;
+    string internalThreadId;
+    SysTime releaseTimestamp;
+    ulong maxIdleTime;
+    
     this() {
         http = HTTP();   // Directly initializes HTTP using its default constructor
-        response = null; // Initialize as null
-		internalThreadId = generateAlphanumericString(); // Give this CurlEngine instance a unique ID
-		if ((debugLogging) && (debugHTTPSResponse)) {addLogEntry("Created new CurlEngine instance id: " ~ to!string(internalThreadId), ["debug"]);}
+        // — zapnout HTTP/2 multiplexing (eliminace zbytečných TLS handshake)
+        http.setOpt(CurlOption.HTTP_VERSION, cast(long)CURL_HTTP_VERSION_2_0);
+        http.setOpt(CurlOption.CURLPIPE_WAIT,      1L);
+        response = null;  // Initialize as null
+        internalThreadId = generateAlphanumericString();  // Give this CurlEngine instance a unique ID
+        if ((debugLogging) && (debugHTTPSResponse)) {
+            addLogEntry("Created new CurlEngine instance id: " ~ to!string(internalThreadId), ["debug"]);
+        }
     }
+
+    
+}
 
 	// The destructor should only clean up resources owned directly by this CurlEngine instance
 	~this() {
